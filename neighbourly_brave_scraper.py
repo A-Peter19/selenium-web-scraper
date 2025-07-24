@@ -34,7 +34,7 @@ driver.save_screenshot('debug_login.png')
 # Handle cookies popup by clicking "Accept all"
 try:
     accept_button = WebDriverWait(driver, 10).until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, "button.nbrly-btn-primary"))
+        EC.element_to_be_clickable((By.XPATH, "//button[.//span[contains(text(), 'Accept all']]"))
     )
     accept_button.click()
     time.sleep(1)
