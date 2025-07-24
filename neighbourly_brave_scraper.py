@@ -5,7 +5,7 @@ import pandas as pd
 import time
 
 # ===== SETUP: PATHS =====
-driver_path = r"D:\02_personal\WH-data\Neighbourly-automation\chrome-win64\chromedriver.exe"  # Path to your downloaded ChromeDriver
+driver_path = r"D:\02_personal\WH-data\Neighbourly-automation\chromedriver-win64\chromedriver.exe"  # Path to your downloaded ChromeDriver
 brave_path = r"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"  # Path to Brave
 
 # ===== CONFIGURE SELENIUM TO USE BRAVE =====
