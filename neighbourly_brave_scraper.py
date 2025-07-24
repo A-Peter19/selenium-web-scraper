@@ -30,6 +30,16 @@ time.sleep(2)
 driver.get("https://www.neighbourly.com/accounts/login")
 time.sleep(3)
 
+# Handle cookies popup by clicking "Accept all"
+try:
+    accept_button = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "button.nbrly-btn-primary"))
+    )
+    accept_button.click()
+    time.sleep(1)
+except Exception:
+    pass  # Popup did not appear; continue
+
 # Fill in login details
 email_element = driver.find_element(By.NAME, "email")
 email_element.clear()
