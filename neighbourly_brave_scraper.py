@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.service import Service
 import pandas as pd
 import time
 
@@ -14,11 +15,8 @@ options.binary_location = brave_path
 options.add_argument(r'--user-data-dir=C:\Users\Peter\AppData\Local\BraveSoftware\Brave-Browser\User Data\Default')
 # You may set an empty profile for maximum freshness, but this lets you keep your cookies.
 
-from selenium.webdriver.chrome.service import Service
-
 service = Service(driver_path)
 driver = webdriver.Chrome(service=service, options=options)
-
 driver.maximize_window()
 time.sleep(2)
 
