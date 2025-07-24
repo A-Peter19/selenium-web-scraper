@@ -45,13 +45,14 @@ email_element = WebDriverWait(driver, 15).until(
     EC.element_to_be_clickable((By.NAME, "email"))
 )
 driver.execute_script("arguments[0].scrollIntoView(true);", email_element)
+email_element.click()
 email_element.clear()
 email_element.send_keys(USERNAME)
 
 password_element = WebDriverWait(driver, 15).until(
     EC.element_to_be_clickable((By.NAME, "password"))
 )
-password_element.clear()
+password_element.click()
 password_element.send_keys(PASSWORD)
 password_element.send_keys(Keys.RETURN)
 time.sleep(5)  # Wait for login to complete
