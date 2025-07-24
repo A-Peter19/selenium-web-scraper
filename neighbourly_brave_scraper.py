@@ -38,7 +38,7 @@ for idx, row in enumerate(rows):
         driver.switch_to.window(driver.window_handles[-1])
         time.sleep(3)
 
-        date = driver.find_element(By.CSS_SELECTOR, '.date-selector').text     # <-- CHANGE THIS
+        date = driver.find_element(By.CSS_SELECTOR, '.nbrly-txt-weight-500"').text
         store = driver.find_element(By.CSS_SELECTOR, '.store-selector').text   # <-- CHANGE THIS
         weight = driver.find_element(By.CSS_SELECTOR, '.weight-selector').text # <-- CHANGE THIS
 
