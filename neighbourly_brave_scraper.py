@@ -24,6 +24,21 @@ driver = webdriver.Chrome(service=service, options=options)
 driver.maximize_window()
 time.sleep(2)
 
+# ===== LOGIN TO NEIGHBOURLY =====
+driver.get("https://www.neighbourly.com/accounts/login")
+time.sleep(3)
+
+# Fill in login details
+email_element = driver.find_element(By.NAME, "email")
+email_element.clear()
+email_element.send_keys(USERNAME)
+
+password_element = driver.find_element(By.NAME, "password")
+password_element.clear()
+password_element.send_keys(PASSWORD)
+password_element.send_keys(Keys.RETURN)
+time.sleep(5)  # Wait for login
+
 # ===== GO TO ARCHIVE PAGE =====
 driver.get("https://www.neighbourly.com/myinkind/goodcause/archive")
 time.sleep(5)   # Let the page load fully
