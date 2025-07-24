@@ -16,6 +16,7 @@ brave_path = r"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.ex
 options = webdriver.ChromeOptions()
 options.binary_location = brave_path
 options.add_argument(r'--user-data-dir=C:\Users\Peter\AppData\Local\BraveSoftware\Brave-Browser\User Data\Default')
+options.add_argument('--profile-directory=Default')
 # You may set an empty profile for maximum freshness, but this lets you keep your cookies.
 
 service = Service(driver_path)
