@@ -31,8 +31,8 @@ rows = driver.find_elements(By.CSS_SELECTOR, "tr")  # Try "tr" first, but best t
 
 for idx, row in enumerate(rows):
     try:
-        # Find the "details" button/link for the row (update selector as needed!)
-        arrow = row.find_element(By.CSS_SELECTOR, '.blue-arrow-selector')  # <-- CHANGE THIS
+        # Find the "details" button/link for the row
+        arrow = row.find_element(By.CSS_SELECTOR, 'a.btn.btn-link') 
         arrow.send_keys(Keys.CONTROL + Keys.RETURN)
         time.sleep(2)
         driver.switch_to.window(driver.window_handles[-1])
