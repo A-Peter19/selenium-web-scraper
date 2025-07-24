@@ -47,8 +47,12 @@ for idx, row in enumerate(rows):
             By.XPATH,
             '//div[span[contains(@class, "fa-building")]]/span[contains(@class,"nbrly-txt-weight-500")]'
         ).text
-        weight = driver.find_element(By.CSS_SELECTOR, '.weight-selector').text # <-- CHANGE THIS
-
+        
+        weight = driver.find_element(
+            By.XPATH,
+            '//div[span[contains(@class, "fa-weight")]]/span[contains(@class,"nbrly-txt-weight-500")]/span'
+        ).text
+        
         results.append({'Date': date, 'Store': store, 'Weight': weight})
 
         driver.close()
