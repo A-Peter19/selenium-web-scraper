@@ -33,13 +33,13 @@ driver.save_screenshot('debug_login.png')
 
 # Handle cookies popup by clicking "Accept all"
 try:
-    accept_button = WebDriverWait(driver, 10).until(
-        EC.element_to_be_clickable((By.XPATH, "//button[.//span[contains(text(), 'Accept all']]"))
+    accept_button = WebDriverWait(driver, 12).until(
+        EC.presence_of_element_located((By.XPATH, "//button[.//span[text()='Accept all']]"))
     )
-    accept_button.click()
-    time.sleep(1)
-except Exception:
-    pass  # Popup did not appear; continue
+    driver.execute_script("arguments[0].click();", accept_button)
+    time.sleep(1.5)
+except Exception as e:
+    print(f"Cookie popup button not found or click failed: {e}")
 
 # Fill in login details
 email_element = WebDriverWait(driver, 15).until(
