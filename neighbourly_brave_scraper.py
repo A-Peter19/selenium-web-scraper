@@ -5,6 +5,9 @@ from selenium.webdriver.chrome.service import Service
 import pandas as pd
 import time
 
+USERNAME = "agnieszka@waddesdonhall.co.uk"
+PASSWORD = "Oplawiec25!"
+
 # ===== SETUP: PATHS =====
 driver_path = r"D:\02_personal\WH-data\Neighbourly-automation\chromedriver-win64\chromedriver.exe"  # Path to your downloaded ChromeDriver
 brave_path = r"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"  # Path to Brave
