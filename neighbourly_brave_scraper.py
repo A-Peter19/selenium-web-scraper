@@ -8,7 +8,7 @@ import time
 driver_path = r"D:\02_personal\WH-data\Neighbourly-automation\chromedriver-win64\chromedriver.exe"  # Path to your downloaded ChromeDriver
 brave_path = r"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"  # Path to Brave
 
-# This will tell Selenium to use your default Brave profile (replace 'YourUser' accordingly)
+# This will tell Selenium to use your default Brave profile
 options = webdriver.ChromeOptions()
 options.binary_location = brave_path
 options.add_argument("C:\Users\Peter\AppData\Local\BraveSoftware\Brave-Browser\User Data\Default")
@@ -43,7 +43,10 @@ for idx, row in enumerate(rows):
             '//div[span[contains(@class, "fa-calendar")]]/span[contains(@class,"nbrly-txt-weight-500")]'
         ).text
 
-        store = driver.find_element(By.CSS_SELECTOR, '.store-selector').text   # <-- CHANGE THIS
+        store = driver.find_element(
+            By.XPATH,
+            '//div[span[contains(@class, "fa-building")]]/span[contains(@class,"nbrly-txt-weight-500")]'
+        ).text
         weight = driver.find_element(By.CSS_SELECTOR, '.weight-selector').text # <-- CHANGE THIS
 
         results.append({'Date': date, 'Store': store, 'Weight': weight})
