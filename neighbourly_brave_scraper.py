@@ -30,7 +30,7 @@ results = []
 rows = [r for r in driver.find_elements(By.CSS_SELECTOR, "tr") if 
 r.find_elements(By.CSS_SELECTOR, "a.btn.btn-link")]
 
-for idx, row in enumerate(rows):
+for idx, row in enumerate(rows[:3]):
     try:
         # Find the "details" button/link for the row
         arrow = row.find_element(By.CSS_SELECTOR, 'a.btn.btn-link') 
