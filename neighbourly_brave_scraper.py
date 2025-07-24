@@ -14,7 +14,11 @@ options.binary_location = brave_path
 options.add_argument(r'--user-data-dir=C:\Users\Peter\AppData\Local\BraveSoftware\Brave-Browser\User Data\Default')
 # You may set an empty profile for maximum freshness, but this lets you keep your cookies.
 
-driver = webdriver.Chrome(executable_path=driver_path, options=options)
+from selenium.webdriver.chrome.service import Service
+
+service = Service(driver_path)
+driver = webdriver.Chrome(service=service, options=options)
+
 driver.maximize_window()
 time.sleep(2)
 
