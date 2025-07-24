@@ -26,8 +26,9 @@ time.sleep(5)   # Let the page load fully
 
 results = []
 
-# Update this selector to only target the table rows you need!
-rows = driver.find_elements(By.CSS_SELECTOR, "tr")  # Try "tr" first, but best to use a unique class for collection rows
+# row selector
+rows = [r for r in driver.find_elements(By.CSS_SELECTOR, "tr") if 
+r.find_elements(By.CSS_SELECTOR, "a.btn.btn-link")]
 
 for idx, row in enumerate(rows):
     try:
