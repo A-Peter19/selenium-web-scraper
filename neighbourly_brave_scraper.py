@@ -29,6 +29,7 @@ time.sleep(2)
 # ===== LOGIN TO NEIGHBOURLY =====
 driver.get("https://www.neighbourly.com/accounts/login")
 time.sleep(3)
+driver.save_screenshot('debug_login.png')
 
 # Handle cookies popup by clicking "Accept all"
 try:
