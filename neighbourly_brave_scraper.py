@@ -26,9 +26,12 @@ results = []
 # row selector
 rows = [r for r in driver.find_elements(By.CSS_SELECTOR, "tr") if 
 r.find_elements(By.CSS_SELECTOR, "a.btn.btn-link")]
+print(f"Found {len(rows)} data rows")
 
 for idx, row in enumerate(rows[:3]):
     try:
+        print(f"Row {idx+1} extraction: date={date}, store={store}, weight={weight}")
+        results.append({'Date': date, 'Store': store, 'Weight': weight})
         # Find the "details" button/link for the row
         arrow = row.find_element(By.CSS_SELECTOR, 'a.btn.btn-link') 
         arrow.send_keys(Keys.CONTROL + Keys.RETURN)
