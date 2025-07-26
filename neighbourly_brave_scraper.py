@@ -49,7 +49,7 @@ for idx, row in enumerate(rows[:3]):
 
         # Optional: Print for debug
         print(f"Using element in row {idx+1}: <{arrow.tag_name}> class='{arrow.get_attribute('class')}'")
-        arrow.send_keys(Keys.CONTROL + Keys.RETURN)
+        row.click()
         time.sleep(2)
         driver.switch_to.window(driver.window_handles[-1])
         time.sleep(3)
