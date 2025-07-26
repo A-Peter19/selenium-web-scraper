@@ -30,8 +30,6 @@ print(f"Found {len(rows)} data rows")
 
 for idx, row in enumerate(rows[:3]):
     try:
-        print(f"Row {idx+1} extraction: date={date}, store={store}, weight={weight}")
-        results.append({'Date': date, 'Store': store, 'Weight': weight})
         # Find the "details" button/link for the row
         arrow = row.find_element(By.CSS_SELECTOR, 'a.btn.btn-link') 
         arrow.send_keys(Keys.CONTROL + Keys.RETURN)
@@ -64,6 +62,9 @@ for idx, row in enumerate(rows[:3]):
         driver.switch_to.window(driver.window_handles[0])
         print(f"Error at row {idx+1}: {e}")
         continue
+        
+    print(f"Row {idx+1} extraction: date={date}, store={store}, weight={weight}")
+    results.append({'Date': date, 'Store': store, 'Weight': weight})
 
 df = pd.DataFrame(results)
 df.to_csv("neighbourly_collections.csv", index=False)
