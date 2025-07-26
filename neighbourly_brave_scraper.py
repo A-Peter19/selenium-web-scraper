@@ -7,9 +7,6 @@ from selenium.webdriver.support import expected_conditions as EC
 import pandas as pd
 import time
 
-USERNAME = "agnieszka@waddesdonhall.co.uk"
-PASSWORD = ""
-
 # ===== SETUP: PATHS =====
 driver_path = r"D:\02_personal\WH-data\Neighbourly-automation\chromedriver-win64\chromedriver.exe"  # Path to your downloaded ChromeDriver
 brave_path = r"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"  # Path to Brave
@@ -25,38 +22,6 @@ service = Service(driver_path)
 driver = webdriver.Chrome(service=service, options=options)
 driver.maximize_window()
 time.sleep(2)
-
-# ===== LOGIN TO NEIGHBOURLY =====
-driver.get("https://www.neighbourly.com/accounts/login")
-time.sleep(3)
-driver.save_screenshot('debug_login.png')
-
-# Handle cookies popup by clicking "Accept all"
-try:
-    accept_button = WebDriverWait(driver, 12).until(
-        EC.presence_of_element_located((By.XPATH, "//button[.//span[text()='Accept all']]"))
-    )
-    driver.execute_script("arguments[0].click();", accept_button)
-    time.sleep(1.5)
-except Exception as e:
-    print(f"Cookie popup button not found or click failed: {e}")
-
-# Fill in login details
-email_element = WebDriverWait(driver, 15).until(
-    EC.element_to_be_clickable((By.NAME, "email"))
-)
-driver.execute_script("arguments[0].scrollIntoView(true);", email_element)
-email_element.click()
-email_element.clear()
-email_element.send_keys(USERNAME)
-
-password_element = WebDriverWait(driver, 15).until(
-    EC.element_to_be_clickable((By.NAME, "password"))
-)
-password_element.click()
-password_element.send_keys(PASSWORD)
-password_element.send_keys(Keys.RETURN)
-time.sleep(5)  # Wait for login to complete
 
 # ===== GO TO ARCHIVE PAGE =====
 driver.get("https://www.neighbourly.com/myinkind/goodcause/archive")
