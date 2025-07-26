@@ -34,8 +34,18 @@ print(f"Found {len(rows)} potential allocation rows")
 
 for idx, row in enumerate(rows[:3]):
     try:
-        # Find the "details" button/link for the row
-        arrow = row.find_element(By.CSS_SELECTOR, 'a.btn.btn-link') 
+        # === Improved: Find the first visible, enabled <a> or <button> in row ===
+        candidate_links = row.find_elements(By.CSS_SELECTOR, 'a, button')
+        arrow = None
+        for link in candidate_links:
+            if link.is_displayed() and link.is_enabled():
+                arrow = link
+                break
+
+        if not arrow:
+            print(f"No clickable arrow found for row {idx+1}")
+            continue
+
         arrow.send_keys(Keys.CONTROL + Keys.RETURN)
         time.sleep(2)
         driver.switch_to.window(driver.window_handles[-1])
@@ -45,27 +55,27 @@ for idx, row in enumerate(rows[:3]):
             By.XPATH,
             '//div[span[contains(@class, "fa-calendar")]]/span[contains(@class,"nbrly-txt-weight-500")]'
         ).text
-
         store = driver.find_element(
             By.XPATH,
             '//div[span[contains(@class, "fa-building")]]/span[contains(@class,"nbrly-txt-weight-500")]'
         ).text
-        
         weight = driver.find_element(
             By.XPATH,
             '//div[span[contains(@class, "fa-weight")]]/span[contains(@class,"nbrly-txt-weight-500")]/span'
         ).text
-        
+
         results.append({'Date': date, 'Store': store, 'Weight': weight})
 
         driver.close()
         driver.switch_to.window(driver.window_handles[0])
         time.sleep(1)
         print(f"Row {idx+1}: Collected!")
+
     except Exception as e:
         driver.switch_to.window(driver.window_handles[0])
         print(f"Error at row {idx+1}: {e}")
         continue
+
         
     print(f"Row {idx+1} extraction: date={date}, store={store}, weight={weight}")
     results.append({'Date': date, 'Store': store, 'Weight': weight})
