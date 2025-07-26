@@ -28,10 +28,9 @@ for i, tr in enumerate(all_trs[:10]):
 
 results = []
 
-# row selector
-rows = [r for r in driver.find_elements(By.CSS_SELECTOR, "tr") if 
-r.find_elements(By.CSS_SELECTOR, "a.btn.btn-link")]
-print(f"Found {len(rows)} data rows")
+# Only process true data rows: those with data-bind="css:{selectedrow:selected}"
+rows = driver.find_elements(By.CSS_SELECTOR, 'tr[data-bind*="selectedrow"]')
+print(f"Found {len(rows)} potential allocation rows")
 
 for idx, row in enumerate(rows[:3]):
     try:
