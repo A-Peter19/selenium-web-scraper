@@ -34,18 +34,20 @@ print(f"Found {len(rows)} potential allocation rows")
 
 for idx, row in enumerate(rows[:3]):
     try:
-        # === Improved: Find the first visible, enabled <a> or <button> in row ===
-        candidate_links = row.find_elements(By.CSS_SELECTOR, 'a, button')
+        # Find ALL <a> and <button> elements in the row
+        candidate_elements = row.find_elements(By.CSS_SELECTOR, 'a, button')
         arrow = None
-        for link in candidate_links:
-            if link.is_displayed() and link.is_enabled():
-                arrow = link
+        for elem in candidate_elements:
+            if elem.is_displayed() and elem.is_enabled():
+                arrow = elem
                 break
 
         if not arrow:
-            print(f"No clickable arrow found for row {idx+1}")
+            print(f"No visible clickable element found in row {idx+1}")
             continue
 
+        # Optional: Print for debug
+        print(f"Using element in row {idx+1}: <{arrow.tag_name}> class='{arrow.get_attribute('class')}'")
         arrow.send_keys(Keys.CONTROL + Keys.RETURN)
         time.sleep(2)
         driver.switch_to.window(driver.window_handles[-1])
@@ -55,10 +57,12 @@ for idx, row in enumerate(rows[:3]):
             By.XPATH,
             '//div[span[contains(@class, "fa-calendar")]]/span[contains(@class,"nbrly-txt-weight-500")]'
         ).text
+
         store = driver.find_element(
             By.XPATH,
             '//div[span[contains(@class, "fa-building")]]/span[contains(@class,"nbrly-txt-weight-500")]'
         ).text
+
         weight = driver.find_element(
             By.XPATH,
             '//div[span[contains(@class, "fa-weight")]]/span[contains(@class,"nbrly-txt-weight-500")]/span'
@@ -75,6 +79,7 @@ for idx, row in enumerate(rows[:3]):
         driver.switch_to.window(driver.window_handles[0])
         print(f"Error at row {idx+1}: {e}")
         continue
+
 
         
     print(f"Row {idx+1} extraction: date={date}, store={store}, weight={weight}")
