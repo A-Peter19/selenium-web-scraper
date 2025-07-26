@@ -7,21 +7,9 @@ from selenium.webdriver.support import expected_conditions as EC
 import pandas as pd
 import time
 
-# ===== SETUP: PATHS =====
-driver_path = r"D:\02_personal\WH-data\Neighbourly-automation\chromedriver-win64\chromedriver.exe"  # Path to your downloaded ChromeDriver
-brave_path = r"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"  # Path to Brave
-
-# This will tell Selenium to use your default Brave profile
 options = webdriver.ChromeOptions()
-options.binary_location = brave_path
 options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
-# options.add_argument(r'--user-data-dir=C:\Users\Peter\AppData\Local\BraveSoftware\Brave-Browser\User Data')
-# options.add_argument('--profile-directory=Default')
-options.add_argument('--no-sandbox')
-options.add_argument('--disable-blink-features=AutomationControlled')
-options.add_argument('--disable-dev-shm-usage')
-options.add_experimental_option("excludeSwitches", ["enable-automation"])
-options.add_experimental_option('useAutomationExtension', False)
+
 
 service = Service(driver_path)
 driver = webdriver.Chrome(service=service, options=options)
