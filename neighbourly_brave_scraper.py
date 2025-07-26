@@ -38,6 +38,7 @@ for idx, row in enumerate(rows[:3]):
         candidate_elements = row.find_elements(By.CSS_SELECTOR, 'a, button')
         arrow = None
         for elem in candidate_elements:
+            print(f"Row {idx+1}: <{elem.tag_name}> class={elem.get_attribute('class')} displayed={elem.is_displayed()} enabled={elem.is_enabled()}")
             if elem.is_displayed() and elem.is_enabled():
                 arrow = elem
                 break
