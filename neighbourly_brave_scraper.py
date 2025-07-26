@@ -2,15 +2,12 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 import time
 
-
-
+driver_path = r"D:\02_personal\WH-data\Neighbourly-automation\chromedriver-win64\chromedriver.exe"
 options = webdriver.ChromeOptions()
 options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
 
 service = Service(driver_path)
 driver = webdriver.Chrome(service=service, options=options)
-driver.maximize_window()
-time.sleep(2)
 
 # ===== GO TO ARCHIVE PAGE =====
 driver.get("https://www.neighbourly.com/myinkind/goodcause/archive")
