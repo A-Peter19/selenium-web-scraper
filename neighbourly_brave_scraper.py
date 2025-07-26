@@ -70,6 +70,7 @@ for idx, row in enumerate(rows[:3]):
         
     print(f"Row {idx+1} extraction: date={date}, store={store}, weight={weight}")
     results.append({'Date': date, 'Store': store, 'Weight': weight})
+    print(f"Row {idx} HTML: {row.get_attribute('outerHTML')[:350]}")
 
 df = pd.DataFrame(results)
 df.to_csv("neighbourly_collections.csv", index=False)
