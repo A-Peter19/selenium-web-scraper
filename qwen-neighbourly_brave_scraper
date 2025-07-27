@@ -1,0 +1,220 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from datetime import datetime
+import pandas as pd
+import time
+
+def connect_to_existing_browser():
+    """Connect to existing browser session"""
+    driver_path = r"D:\02_personal\WH-data\Neighbourly-automation\chromedriver-win64\chromedriver.exe"
+    options = webdriver.ChromeOptions()
+    options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
+    service = Service(driver_path)
+    driver = webdriver.Chrome(service=service, options=options)
+    return driver
+
+def extract_date_from_row(row):
+    """Extract and parse date from table row"""
+    try:
+        # Find date cell (usually first column)
+        date_cell = row.find_element(By.CSS_SELECTOR, 'td:first-child')
+        date_text = date_cell.text.strip()
+        # Parse date assuming format like "01 Jan 2024"
+        date_obj = datetime.strptime(date_text, "%d %b %Y")
+        return date_obj
+    except Exception as e:
+        print(f"Error parsing date: {e}")
+        return None
+
+def is_date_in_range(date_obj, start_date, end_date):
+    """Check if date is within target range"""
+    if date_obj:
+        return start_date <= date_obj <= end_date
+    return False
+
+def get_all_pages_data(driver, start_date, end_date):
+    """Navigate through all pages and collect data within date range"""
+    all_results = []
+    page_number = 1
+    
+    while True:
+        print(f"\nProcessing page {page_number}...")
+        
+        # Wait for table to load
+        wait = WebDriverWait(driver, 15)
+        wait.until(EC.presence_of_element_located((By.TAG_NAME, "table")))
+        time.sleep(3)
+        
+        # Find all allocation rows
+        rows = driver.find_elements(By.CSS_SELECTOR, 'tr[data-bind*="selectedrow"]')
+        print(f"Found {len(rows)} rows on page {page_number}")
+        
+        if not rows:
+            print("No more rows found, stopping pagination")
+            break
+            
+        page_results = []
+        out_of_range_count = 0
+        
+        # Process each row on current page
+        for idx, row in enumerate(rows):
+            try:
+                # Extract date from row
+                row_date = extract_date_from_row(row)
+                
+                # Check if date is in target range
+                if is_date_in_range(row_date, start_date, end_date):
+                    print(f"Row {idx+1}: Date {row_date.strftime('%d %b %Y')} is in range")
+                    
+                    # Find and click details link
+                    detail_elements = row.find_elements(By.CSS_SELECTOR, 'a, button')
+                    detail_element = None
+                    for element in detail_elements:
+                        if element.is_displayed() and element.is_enabled():
+                            detail_element = element
+                            break
+                    
+                    if detail_element:
+                        # Click details and extract data
+                        detail_element.click()
+                        time.sleep(3)
+                        
+                        # Switch to new tab
+                        driver.switch_to.window(driver.window_handles[-1])
+                        time.sleep(2)
+                        
+                        # Extract data
+                        try:
+                            date = driver.find_element(
+                                By.XPATH,
+                                '//div[span[contains(@class, "fa-calendar")]]//span[contains(@class,"nbrly-txt-weight-500")]'
+                            ).text.strip()
+                        except:
+                            date = "N/A"
+                            
+                        try:
+                            store = driver.find_element(
+                                By.XPATH,
+                                '//div[span[contains(@class, "fa-building")]]//span[contains(@class,"nbrly-txt-weight-500")]'
+                            ).text.strip()
+                        except:
+                            store = "N/A"
+                            
+                        try:
+                            weight = driver.find_element(
+                                By.XPATH,
+                                '//div[span[contains(@class, "fa-weight")]]//span[contains(@class,"nbrly-txt-weight-500")]//span'
+                            ).text.strip()
+                        except:
+                            weight = "N/A"
+                        
+                        page_results.append({
+                            'Date': date,
+                            'Store': store,
+                            'Weight': weight
+                        })
+                        
+                        print(f"Extracted: {date} - {store} - {weight}")
+                        
+                        # Close tab and return to main page
+                        driver.close()
+                        driver.switch_to.window(driver.window_handles[0])
+                        time.sleep(1)
+                    else:
+                        print(f"No clickable element in row {idx+1}")
+                else:
+                    # Date is outside range
+                    if row_date and row_date < start_date:
+                        out_of_range_count += 1
+                        print(f"Row {idx+1}: Date {row_date.strftime('%d %b %Y')} is before start date")
+                    elif row_date and row_date > end_date:
+                        print(f"Row {idx+1}: Date {row_date.strftime('%d %b %Y')} is after end date")
+                        
+            except Exception as e:
+                print(f"Error processing row {idx+1}: {str(e)}")
+                # Ensure we're back on main tab
+                if len(driver.window_handles) > 1:
+                    driver.close()
+                    driver.switch_to.window(driver.window_handles[0])
+                continue
+        
+        # Add page results to all results
+        all_results.extend(page_results)
+        print(f"Collected {len(page_results)} entries from page {page_number}")
+        
+        # Check if we should stop (all dates on page are before start date)
+        if out_of_range_count == len(rows) and len(rows) > 0:
+            print("All dates on this page are before start date, stopping pagination")
+            break
+        
+        # Try to find and click "See more" button
+        try:
+            see_more_button = driver.find_element(By.XPATH, '//button[text()="See more"]')
+            if see_more_button.is_enabled() and see_more_button.is_displayed():
+                print("Clicking 'See more' button...")
+                see_more_button.click()
+                time.sleep(5)  # Wait for new rows to load
+                page_number += 1
+            else:
+                print("'See more' button not found, assuming no more pages")
+                break
+        except:
+            print("'See more' button not found, assuming no more pages")
+            break
+    
+    return all_results
+
+def save_to_csv(data, filename="neighbourly_collections_complete.csv"):
+    """Save data to CSV file"""
+    if data:
+        df = pd.DataFrame(data)
+        # Sort by date if possible
+        try:
+            df['Date_Parsed'] = pd.to_datetime(df['Date'], format='%d %b %Y')
+            df = df.sort_values('Date_Parsed', ascending=False)
+            df = df.drop('Date_Parsed', axis=1)
+        except:
+            pass
+            
+        df.to_csv(filename, index=False)
+        print(f"\nData saved to {filename}")
+        print(f"Total entries collected: {len(data)}")
+        print(df.head().to_string())
+    else:
+        print("No data collected")
+
+def main():
+    """Main execution function"""
+    try:
+        # Define date range
+        start_date = datetime(2024, 1, 1)  # January 1st, 2024
+        end_date = datetime.now()  # Today's date
+        
+        print(f"Collecting data from {start_date.strftime('%d %b %Y')} to {end_date.strftime('%d %b %Y')}")
+        
+        # Connect to browser
+        print("Connecting to existing browser session...")
+        driver = connect_to_existing_browser()
+        print("Connected successfully!")
+        
+        # Navigate to archive page
+        # print("Navigating to archive page...")
+        # driver.get("https://www.neighbourly.com/myinkind/goodcause/archive")
+        # time.sleep(5)
+        
+        # Collect all data
+        results = get_all_pages_data(driver, start_date, end_date)
+        
+        # Save results
+        save_to_csv(results)
+        
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+    finally:
+        print("\nScript completed. Browser session remains open.")
+
+if __name__ == "__main__":
+    main()
